@@ -29,8 +29,8 @@ export default async function DashboardPage() {
   const mostLiked = mostLikedRows?.[0] ?? null;
   const leastLiked = leastLikedRows?.[0] ?? null;
 
-  const mostLikedImageUrl = (mostLiked?.images as { url: string } | null)?.url ?? null;
-  const leastLikedImageUrl = (leastLiked?.images as { url: string } | null)?.url ?? null;
+  const mostLikedImageUrl = (mostLiked?.images as unknown as { url: string } | null)?.url ?? null;
+  const leastLikedImageUrl = (leastLiked?.images as unknown as { url: string } | null)?.url ?? null;
 
   const now = new Date();
   const monthsElapsed = now.getFullYear() === 2026
