@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+:root {
+  --jade: #00FF9F;
+  --jade-dim: rgba(0, 255, 159, 0.7);
+  --jade-muted: rgba(0, 255, 159, 0.3);
+  --jade-subtle: rgba(0, 255, 159, 0.15);
+  --jade-glass: rgba(0, 255, 159, 0.03);
+  --jade-glow: 0 0 20px rgba(0, 255, 159, 0.3);
+  --jade-glow-sm: 0 0 10px rgba(0, 255, 159, 0.2);
+  --background: #000000;
+  --foreground: #00FF9F;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #000000;
+  color: var(--jade);
+  font-family: var(--font-geist-mono), "Courier New", monospace;
+  min-height: 100vh;
+}
+
+/* Grid background pattern */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(0, 255, 159, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 159, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Jade neon button */
+.btn-jade {
+  background: transparent;
+  border: 1px solid var(--jade);
+  color: var(--jade);
+  font-family: inherit;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.5rem 1.25rem;
+  cursor: pointer;
+  transition: box-shadow 0.2s, background 0.2s;
+}
+.btn-jade:hover {
+  box-shadow: var(--jade-glow);
+  background: rgba(0, 255, 159, 0.05);
+}
+
+/* Stat card */
+.stat-card {
+  background: var(--jade-glass);
+  border: 1px solid var(--jade-subtle);
+  border-top: 2px solid var(--jade);
+  padding: 1.5rem;
+  transition: box-shadow 0.2s;
+}
+.stat-card:hover {
+  box-shadow: var(--jade-glow-sm);
+}
+
+/* Table row hover */
+tr:hover td {
+  border-left: 2px solid var(--jade);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--jade-subtle);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--jade-muted);
+}
+
+/* Input */
+.input-jade {
+  background: var(--jade-glass);
+  border: 1px solid var(--jade-subtle);
+  color: var(--jade);
+  font-family: inherit;
+  font-size: 0.875rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.input-jade:focus {
+  border-color: var(--jade);
+  box-shadow: var(--jade-glow-sm);
+}
+.input-jade::placeholder {
+  color: var(--jade-muted);
+}

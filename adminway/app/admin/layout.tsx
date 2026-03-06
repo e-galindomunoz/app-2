@@ -1,0 +1,53 @@
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import { Sidebar } from "@/components/admin/sidebar";
+import { Header } from "@/components/admin/header";
+
+export default async function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const supabase = await createClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect("/login");
+  }
+
+  const bypass = process.env.SUPERADMIN_BYPASS_EMAIL;
+  const isBypass = !!bypass && user.email === bypass;
+  if (!isBypass) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("is_superadmin")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile?.is_superadmin) {
+      redirect("/unauthorized");
+    }
+  }
+
+  return (
+    <div style={{ display: "flex", minHeight: "100vh", background: "#000" }}>
+      <Sidebar />
+      <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+        <Header email={user.email ?? null} isBypass={isBypass} />
+        <main
+          className="bg-grid"
+          style={{
+            flex: 1,
+            overflow: "auto",
+            padding: "2rem",
+          }}
+        >
+          {children}
+        </main>
+      </div>
+    </div>
+  );
+}
