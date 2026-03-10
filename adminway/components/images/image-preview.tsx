@@ -19,7 +19,7 @@ export function ImagePreview({ src }: Props) {
     >
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={src}
+        src={src || undefined}
         alt=""
         style={{ maxWidth: "100%", maxHeight: "100%", objectFit: "contain" }}
         onError={(e) => {

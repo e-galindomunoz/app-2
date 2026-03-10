@@ -115,7 +115,7 @@ export default async function CaptionsPage({ searchParams }: Props) {
                     maxWidth: "400px",
                   }}
                 >
-                  <CaptionCopy content={c.content} />
+                  <CaptionCopy content={c.content ?? ""} />
                 </td>
                 <td style={{ padding: "0.75rem 1rem" }}>
                   <Badge label={c.image_id ? "Yes" : "No"} active={!!c.image_id} />

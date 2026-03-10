@@ -67,9 +67,23 @@ body {
   box-shadow: var(--jade-glow-sm);
 }
 
+/* Sidebar nav link hover */
+.sidebar-link:hover {
+  color: var(--jade) !important;
+  background: var(--jade-subtle) !important;
+  box-shadow: inset var(--jade-glow-sm) !important;
+}
+
 /* Table row hover */
-tr:hover td {
-  border-left: 2px solid var(--jade);
+tbody tr {
+  transition: background 0.15s, box-shadow 0.15s;
+}
+tbody tr:hover {
+  background: var(--jade-subtle) !important;
+  box-shadow: inset var(--jade-glow-sm);
+}
+tbody tr:hover td {
+  color: var(--jade) !important;
 }
 
 /* Scrollbar */

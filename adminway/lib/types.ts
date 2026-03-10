@@ -1,7 +1,7 @@
 export type Profile = {
   id: string;
-  created_datetime_utc: string;
-  modified_datetime_utc: string;
+  created_datetime_utc: string | null;
+  modified_datetime_utc: string | null;
   first_name: string | null;
   last_name: string | null;
   email: string | null;
@@ -13,12 +13,12 @@ export type Profile = {
 export type Image = {
   id: string;
   created_datetime_utc: string;
-  modified_datetime_utc: string;
-  url: string;
-  is_common_use: boolean;
+  modified_datetime_utc: string | null;
+  url: string | null;
+  is_common_use: boolean | null;
   profile_id: string | null;
   additional_context: string | null;
-  is_public: boolean;
+  is_public: boolean | null;
   image_description: string | null;
   celebrity_recognition: string | null;
   embedding: number[] | null;
@@ -27,13 +27,122 @@ export type Image = {
 export type Caption = {
   id: string;
   created_datetime_utc: string;
-  content: string;
+  modified_datetime_utc: string | null;
+  content: string | null;
   is_public: boolean;
-  profile_id: string | null;
-  image_id: string | null;
-  humor_flavor_id: string | null;
+  profile_id: string;
+  image_id: string;
+  humor_flavor_id: number | null;
   is_featured: boolean;
   caption_request_id: number | null;
   like_count: number;
   llm_prompt_chain_id: number | null;
+};
+
+export type HumorFlavor = {
+  id: number;
+  created_datetime_utc: string;
+  slug: string;
+  description: string | null;
+};
+
+export type HumorFlavorStep = {
+  id: number;
+  created_datetime_utc: string;
+  humor_flavor_id: number;
+  llm_temperature: number | null;
+  order_by: number;
+  llm_input_type_id: number;
+  llm_output_type_id: number;
+  llm_model_id: number;
+  humor_flavor_step_type_id: number;
+  llm_system_prompt: string | null;
+  llm_user_prompt: string | null;
+  description: string | null;
+};
+
+export type HumorFlavorMix = {
+  id: number;
+  created_datetime_utc: string;
+  humor_flavor_id: number;
+  caption_count: number;
+};
+
+export type Term = {
+  id: number;
+  created_datetime_utc: string;
+  modified_datetime_utc: string | null;
+  term: string;
+  definition: string;
+  example: string;
+  priority: number;
+  term_type_id: number | null;
+};
+
+export type CaptionRequest = {
+  id: number;
+  created_datetime_utc: string;
+  profile_id: string;
+  image_id: string;
+};
+
+export type CaptionExample = {
+  id: number;
+  created_datetime_utc: string;
+  modified_datetime_utc: string | null;
+  image_description: string;
+  caption: string;
+  explanation: string;
+  priority: number;
+  image_id: string | null;
+};
+
+export type LlmProvider = {
+  id: number;
+  created_datetime_utc: string;
+  name: string;
+};
+
+export type LlmModel = {
+  id: number;
+  created_datetime_utc: string;
+  name: string;
+  llm_provider_id: number;
+  provider_model_id: string;
+  is_temperature_supported: boolean;
+};
+
+export type LlmPromptChain = {
+  id: number;
+  created_datetime_utc: string;
+  caption_request_id: number;
+};
+
+export type LlmModelResponse = {
+  id: string;
+  created_datetime_utc: string;
+  llm_model_response: string | null;
+  processing_time_seconds: number;
+  llm_model_id: number;
+  profile_id: string;
+  caption_request_id: number;
+  llm_system_prompt: string;
+  llm_user_prompt: string;
+  llm_temperature: number | null;
+  humor_flavor_id: number;
+  llm_prompt_chain_id: number | null;
+  humor_flavor_step_id: number | null;
+};
+
+export type AllowedSignupDomain = {
+  id: number;
+  created_datetime_utc: string;
+  apex_domain: string;
+};
+
+export type WhitelistedEmail = {
+  id: number;
+  created_datetime_utc: string;
+  modified_datetime_utc: string | null;
+  email_address: string;
 };

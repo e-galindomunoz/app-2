@@ -33,7 +33,7 @@ export default async function AdminLayout({
   }
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#000" }}>
+    <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: "#000" }}>
       <Sidebar />
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
         <Header email={user.email ?? null} isBypass={isBypass} />
@@ -41,7 +41,7 @@ export default async function AdminLayout({
           className="bg-grid"
           style={{
             flex: 1,
-            overflow: "auto",
+            overflowY: "auto",
             padding: "2rem",
           }}
         >
