@@ -7,7 +7,10 @@ import { useState } from "react";
 const NAV_SECTIONS = [
   {
     label: "Overview",
-    items: [{ href: "/admin/dashboard", label: "Dashboard", icon: "◈" }],
+    items: [
+      { href: "/admin/dashboard", label: "Dashboard", icon: "◈" },
+      { href: "/admin/terminal", label: "Terminal", icon: "▸" },
+    ],
   },
   {
     label: "Content",

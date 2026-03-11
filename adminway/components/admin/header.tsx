@@ -5,10 +5,9 @@ import { useRouter } from "next/navigation";
 
 interface HeaderProps {
   email: string | null;
-  isBypass?: boolean;
 }
 
-export function Header({ email, isBypass }: HeaderProps) {
+export function Header({ email }: HeaderProps) {
   const router = useRouter();
 
   async function handleSignOut() {
@@ -42,6 +41,20 @@ export function Header({ email, isBypass }: HeaderProps) {
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: "1.5rem" }}>
+        <span
+          style={{
+            fontSize: "0.55rem",
+            fontWeight: 700,
+            letterSpacing: "0.2em",
+            textTransform: "uppercase",
+            color: "#000",
+            background: "var(--jade)",
+            padding: "0.2rem 0.5rem",
+            boxShadow: "var(--jade-glow)",
+          }}
+        >
+          Superadmin
+        </span>
         {email && (
           <span
             style={{
@@ -53,23 +66,7 @@ export function Header({ email, isBypass }: HeaderProps) {
             {email}
           </span>
         )}
-        {isBypass && (
-          <span
-            style={{
-              fontSize: "0.55rem",
-              fontWeight: 700,
-              letterSpacing: "0.2em",
-              textTransform: "uppercase",
-              color: "#000",
-              background: "var(--jade)",
-              padding: "0.2rem 0.5rem",
-              boxShadow: "0 0 10px var(--jade-glow)",
-            }}
-          >
-            Honorary Admin
-          </span>
-        )}
-        <button onClick={handleSignOut} className="btn-jade">
+<button onClick={handleSignOut} className="btn-jade">
           Sign Out
         </button>
       </div>

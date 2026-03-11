@@ -46,9 +46,6 @@ export async function requireSuperadmin() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  const bypass = process.env.SUPERADMIN_BYPASS_EMAIL;
-  if (bypass && user.email === bypass) return;
-
   const { data: profile } = await supabase
     .from("profiles")
     .select("is_superadmin")

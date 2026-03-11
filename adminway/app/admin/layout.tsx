@@ -18,25 +18,21 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const bypass = process.env.SUPERADMIN_BYPASS_EMAIL;
-  const isBypass = !!bypass && user.email === bypass;
-  if (!isBypass) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("is_superadmin")
-      .eq("id", user.id)
-      .single();
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("is_superadmin")
+    .eq("id", user.id)
+    .single();
 
-    if (!profile?.is_superadmin) {
-      redirect("/unauthorized");
-    }
+  if (!profile?.is_superadmin) {
+    redirect("/unauthorized");
   }
 
   return (
     <div style={{ display: "flex", height: "100vh", overflow: "hidden", background: "#000" }}>
       <Sidebar />
       <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
-        <Header email={user.email ?? null} isBypass={isBypass} />
+        <Header email={user.email ?? null} />
         <main
           className="bg-grid"
           style={{
