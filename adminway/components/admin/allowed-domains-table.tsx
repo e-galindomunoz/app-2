@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition, useMemo } from "react";
-import { createAllowedDomain, deleteAllowedDomain } from "@/app/admin/allowed-signup-domains/actions";
+import { createAllowedDomain, updateAllowedDomain, deleteAllowedDomain } from "@/app/admin/allowed-signup-domains/actions";
 import type { AllowedSignupDomain } from "@/lib/types";
 
 const cellStyle: React.CSSProperties = { padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-dim)", verticalAlign: "top" };
@@ -9,6 +9,7 @@ const thStyle: React.CSSProperties = { textAlign: "left", padding: "0.75rem 1rem
 
 export function AllowedDomainsTable({ items }: { items: AllowedSignupDomain[] }) {
   const [showAdd, setShowAdd] = useState(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [q, setQ] = useState("");
@@ -27,6 +28,14 @@ export function AllowedDomainsTable({ items }: { items: AllowedSignupDomain[] })
       const result = await createAllowedDomain(fd);
       if (result.error) { setError(result.error); return; }
       setShowAdd(false); setError(null);
+    });
+  }
+
+  function handleUpdate(id: number, fd: FormData) {
+    startTransition(async () => {
+      const result = await updateAllowedDomain(id, fd);
+      if (result.error) { setError(result.error); return; }
+      setEditingId(null); setError(null);
     });
   }
 
@@ -80,11 +89,24 @@ export function AllowedDomainsTable({ items }: { items: AllowedSignupDomain[] })
           <tbody>
             {filtered.map((d) => (
               <tr key={d.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
-                <td style={{ ...cellStyle, fontWeight: 600, color: "var(--jade-dim)" }}>{d.apex_domain}</td>
-                <td style={{ ...cellStyle, fontSize: "0.7rem", color: "var(--jade-muted)" }}>{new Date(d.created_datetime_utc).toLocaleDateString()}</td>
-                <td style={{ padding: "0.5rem 1rem" }}>
-                  <button onClick={() => handleDelete(d.id)} disabled={isPending} className="btn-jade" style={{ fontSize: "0.625rem", padding: "0.2rem 0.5rem", opacity: 0.6 }}>Del</button>
-                </td>
+                {editingId === d.id ? (
+                  <td colSpan={3} style={{ padding: "0.5rem 1rem" }}>
+                    <form onSubmit={(e) => { e.preventDefault(); handleUpdate(d.id, new FormData(e.currentTarget)); }} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+                      <input name="domain" required defaultValue={d.apex_domain} className="input-jade" style={{ fontSize: "0.7rem", padding: "0.25rem 0.5rem", flex: 1, maxWidth: "300px" }} />
+                      <button type="submit" disabled={isPending} className="btn-jade" style={{ fontSize: "0.625rem", padding: "0.2rem 0.5rem" }}>{isPending ? "…" : "Save"}</button>
+                      <button type="button" onClick={() => setEditingId(null)} className="btn-jade" style={{ fontSize: "0.625rem", padding: "0.2rem 0.5rem", opacity: 0.6 }}>Cancel</button>
+                    </form>
+                  </td>
+                ) : (
+                  <>
+                    <td style={{ ...cellStyle, fontWeight: 600, color: "var(--jade-dim)" }}>{d.apex_domain}</td>
+                    <td style={{ ...cellStyle, fontSize: "0.7rem", color: "var(--jade-muted)" }}>{new Date(d.created_datetime_utc).toLocaleDateString()}</td>
+                    <td style={{ padding: "0.5rem 1rem", display: "flex", gap: "0.4rem" }}>
+                      <button onClick={() => setEditingId(d.id)} disabled={isPending} className="btn-jade" style={{ fontSize: "0.625rem", padding: "0.2rem 0.5rem" }}>Edit</button>
+                      <button onClick={() => handleDelete(d.id)} disabled={isPending} className="btn-jade" style={{ fontSize: "0.625rem", padding: "0.2rem 0.5rem", opacity: 0.6 }}>Del</button>
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>

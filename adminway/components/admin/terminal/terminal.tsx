@@ -95,7 +95,7 @@ const ENTITIES: Record<string, EntityConfig> = {
     searchCols: ["apex_domain"],
   },
   "whitelisted-emails": {
-    table: "whitelisted_emails",
+    table: "whitelist_email_addresses",
     cols: ["id", "email_address", "created_datetime_utc"],
     searchCols: ["email_address"],
   },

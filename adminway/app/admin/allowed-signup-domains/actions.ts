@@ -14,6 +14,17 @@ export async function createAllowedDomain(formData: FormData) {
   return {};
 }
 
+export async function updateAllowedDomain(id: number, formData: FormData) {
+  await requireSuperadmin();
+  const supabase = createAnonClient();
+  const { error } = await supabase.from("allowed_signup_domains").update({
+    apex_domain: (formData.get("domain") as string).toLowerCase().trim(),
+  }).eq("id", id);
+  if (error) return { error: error.message };
+  revalidatePath("/admin/allowed-signup-domains");
+  return {};
+}
+
 export async function deleteAllowedDomain(id: number) {
   await requireSuperadmin();
   const supabase = createAnonClient();

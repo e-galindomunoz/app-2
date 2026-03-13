@@ -7,7 +7,7 @@ export default async function AllowedSignupDomainsPage() {
   const { data: domains } = await supabase
     .from("allowed_signup_domains")
     .select("*")
-    .order("domain", { ascending: true });
+    .order("apex_domain", { ascending: true });
 
   return <AllowedDomainsTable items={(domains as AllowedSignupDomain[]) ?? []} />;
 }

@@ -7,7 +7,7 @@ export default async function WhitelistedEmailsPage() {
   const { data: emails } = await supabase
     .from("whitelist_email_addresses")
     .select("*")
-    .order("email", { ascending: true });
+    .order("email_address", { ascending: true });
 
   return <WhitelistedEmailsTable items={(emails as WhitelistedEmail[]) ?? []} />;
 }
