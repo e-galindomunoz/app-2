@@ -44,11 +44,11 @@ export async function terminalCreate(
   table: string,
   data: Record<string, unknown>
 ) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const supabase = await createActionClient();
   const { data: result, error } = await supabase
     .from(table)
-    .insert(data)
+    .insert({ ...data, created_by_user_id: userId, modified_by_user_id: userId })
     .select()
     .maybeSingle();
   if (error) throw new Error(error.message);
@@ -60,11 +60,11 @@ export async function terminalUpdate(
   id: string,
   data: Record<string, unknown>
 ) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const supabase = await createActionClient();
   const { data: result, error } = await supabase
     .from(table)
-    .update(data)
+    .update({ ...data, modified_by_user_id: userId })
     .eq("id", id)
     .select()
     .maybeSingle();

@@ -43,7 +43,7 @@ async function main() {
 
   const { error: updateError } = await supabase
     .from("profiles")
-    .update({ is_superadmin: true })
+    .update({ is_superadmin: true, modified_by_user_id: profile.id })
     .eq("id", profile.id);
 
   if (updateError) {

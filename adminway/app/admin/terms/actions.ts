@@ -4,13 +4,15 @@ import { createAnonClient, requireSuperadmin } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createTerm(formData: FormData) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const supabase = createAnonClient();
   const { error } = await supabase.from("terms").insert({
     term: formData.get("term") as string,
     definition: formData.get("definition") as string,
     example: formData.get("example") as string,
     priority: Number(formData.get("priority") ?? 0),
+    created_by_user_id: userId,
+    modified_by_user_id: userId,
   });
   if (error) return { error: error.message };
   revalidatePath("/admin/terms");
@@ -18,7 +20,7 @@ export async function createTerm(formData: FormData) {
 }
 
 export async function updateTerm(id: number, formData: FormData) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const supabase = createAnonClient();
   const { error } = await supabase
     .from("terms")
@@ -27,7 +29,7 @@ export async function updateTerm(id: number, formData: FormData) {
       definition: formData.get("definition") as string,
       example: formData.get("example") as string,
       priority: Number(formData.get("priority") ?? 0),
-      modified_datetime_utc: new Date().toISOString(),
+      modified_by_user_id: userId,
     })
     .eq("id", id);
   if (error) return { error: error.message };

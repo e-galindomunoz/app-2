@@ -28,13 +28,16 @@ export function ImageForm({ image, profiles, action }: ImageFormProps) {
     if (!image) {
       const supabase = createClient();
       const { data: { session } } = await supabase.auth.getSession();
+      const userId = session?.user.id ?? null;
       const { error: dbError } = await supabase.from("images").insert({
         url,
-        profile_id: session?.user.id ?? null,
+        profile_id: userId,
         is_public: (form.is_public as HTMLInputElement).checked,
         is_common_use: (form.is_common_use as HTMLInputElement).checked,
         additional_context: (form.additional_context as HTMLTextAreaElement).value || null,
         image_description: (form.image_description as HTMLTextAreaElement).value || null,
+        created_by_user_id: userId,
+        modified_by_user_id: userId,
       });
       setPending(false);
       if (dbError) { setError(dbError.message); return; }
@@ -44,13 +47,14 @@ export function ImageForm({ image, profiles, action }: ImageFormProps) {
 
     // For edits, also use browser client
     const supabase = createClient();
+    const { data: { session } } = await supabase.auth.getSession();
     const { error: dbError } = await supabase.from("images").update({
       url,
       is_public: (form.is_public as HTMLInputElement).checked,
       is_common_use: (form.is_common_use as HTMLInputElement).checked,
       additional_context: (form.additional_context as HTMLTextAreaElement).value || null,
       image_description: (form.image_description as HTMLTextAreaElement).value || null,
-      modified_datetime_utc: new Date().toISOString(),
+      modified_by_user_id: session?.user.id ?? null,
     }).eq("id", image.id);
     setPending(false);
     if (dbError) { setError(dbError.message); return; }

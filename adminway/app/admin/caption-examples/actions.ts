@@ -4,7 +4,7 @@ import { createAnonClient, requireSuperadmin } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function createCaptionExample(formData: FormData) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const supabase = createAnonClient();
   const { error } = await supabase.from("caption_examples").insert({
     image_description: formData.get("image_description") as string,
@@ -12,6 +12,8 @@ export async function createCaptionExample(formData: FormData) {
     explanation: formData.get("explanation") as string,
     priority: Number(formData.get("priority") ?? 0),
     image_id: (formData.get("image_id") as string) || null,
+    created_by_user_id: userId,
+    modified_by_user_id: userId,
   });
   if (error) return { error: error.message };
   revalidatePath("/admin/caption-examples");
@@ -19,7 +21,7 @@ export async function createCaptionExample(formData: FormData) {
 }
 
 export async function updateCaptionExample(id: number, formData: FormData) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const supabase = createAnonClient();
   const { error } = await supabase
     .from("caption_examples")
@@ -29,7 +31,7 @@ export async function updateCaptionExample(id: number, formData: FormData) {
       explanation: formData.get("explanation") as string,
       priority: Number(formData.get("priority") ?? 0),
       image_id: (formData.get("image_id") as string) || null,
-      modified_datetime_utc: new Date().toISOString(),
+      modified_by_user_id: userId,
     })
     .eq("id", id);
   if (error) return { error: error.message };

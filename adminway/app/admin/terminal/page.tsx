@@ -10,7 +10,7 @@ export default function TerminalPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (code === "69") {
+    if (code === "1754") {
       setUnlocked(true);
     } else {
       setShake(true);
@@ -50,9 +50,7 @@ export default function TerminalPage() {
             letterSpacing: "0.04em",
           }}
         >
-          this is still under development...
-          <br />
-          but take a quick peek if you know the code
+          psssst... type in 1754 trust me bro
         </div>
 
         <form

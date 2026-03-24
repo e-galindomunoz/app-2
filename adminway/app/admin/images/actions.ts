@@ -15,9 +15,13 @@ function parseFormData(formData: FormData) {
 }
 
 export async function createImage(formData: FormData) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const admin = createAnonClient();
-  const { error } = await admin.from("images").insert(parseFormData(formData));
+  const { error } = await admin.from("images").insert({
+    ...parseFormData(formData),
+    created_by_user_id: userId,
+    modified_by_user_id: userId,
+  });
 
   if (error) return { error: error.message };
   revalidatePath("/admin/images");
@@ -25,11 +29,11 @@ export async function createImage(formData: FormData) {
 }
 
 export async function updateImage(id: string, formData: FormData) {
-  await requireSuperadmin();
+  const { userId } = await requireSuperadmin();
   const admin = createAnonClient();
   const fields = {
     ...parseFormData(formData),
-    modified_datetime_utc: new Date().toISOString(),
+    modified_by_user_id: userId,
   };
 
   const { error } = await admin.from("images").update(fields).eq("id", id);

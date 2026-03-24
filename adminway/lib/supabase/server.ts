@@ -40,8 +40,8 @@ export function createAdminClient() {
   );
 }
 
-// Throws if the caller is not authenticated + superadmin (or bypass email)
-export async function requireSuperadmin() {
+// Throws if the caller is not authenticated + superadmin. Returns the caller's profile ID.
+export async function requireSuperadmin(): Promise<{ userId: string }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
@@ -53,6 +53,7 @@ export async function requireSuperadmin() {
     .single();
 
   if (!profile?.is_superadmin) throw new Error("Forbidden");
+  return { userId: user.id };
 }
 
 // For Server Actions & Route Handlers — cookies are read-write
