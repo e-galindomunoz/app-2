@@ -68,6 +68,11 @@ export type HumorFlavorMix = {
   caption_count: number;
 };
 
+export type TermType = {
+  id: number;
+  name: string;
+};
+
 export type Term = {
   id: number;
   created_datetime_utc: string;

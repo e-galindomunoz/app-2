@@ -6,11 +6,13 @@ import { revalidatePath } from "next/cache";
 export async function createTerm(formData: FormData) {
   const { userId } = await requireSuperadmin();
   const supabase = createAnonClient();
+  const termTypeRaw = formData.get("term_type_id");
   const { error } = await supabase.from("terms").insert({
     term: formData.get("term") as string,
     definition: formData.get("definition") as string,
     example: formData.get("example") as string,
     priority: Number(formData.get("priority") ?? 0),
+    term_type_id: termTypeRaw ? Number(termTypeRaw) : null,
     created_by_user_id: userId,
     modified_by_user_id: userId,
   });
@@ -29,6 +31,7 @@ export async function updateTerm(id: number, formData: FormData) {
       definition: formData.get("definition") as string,
       example: formData.get("example") as string,
       priority: Number(formData.get("priority") ?? 0),
+      term_type_id: formData.get("term_type_id") ? Number(formData.get("term_type_id")) : null,
       modified_by_user_id: userId,
     })
     .eq("id", id);

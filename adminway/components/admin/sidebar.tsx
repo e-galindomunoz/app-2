@@ -15,7 +15,7 @@ const NAV_SECTIONS = [
   {
     label: "Content",
     items: [
-      { href: "/admin/profiles", label: "Users", icon: "◉" },
+      { href: "/admin/profiles", label: "Profiles", icon: "◉" },
       { href: "/admin/images", label: "Images", icon: "◫" },
       { href: "/admin/captions", label: "Captions", icon: "◳" },
       { href: "/admin/caption-requests", label: "Caption Requests", icon: "◧" },
@@ -167,7 +167,7 @@ export function Sidebar() {
           flexShrink: 0,
         }}
       >
-        ADMINWAY v1.0
+        ADMINWAY v3.0
       </div>
     </aside>
   );

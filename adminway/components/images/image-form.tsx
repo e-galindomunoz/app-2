@@ -48,8 +48,10 @@ export function ImageForm({ image, profiles, action }: ImageFormProps) {
     // For edits, also use browser client
     const supabase = createClient();
     const { data: { session } } = await supabase.auth.getSession();
+    const profileIdVal = (form.profile_id as HTMLSelectElement).value;
     const { error: dbError } = await supabase.from("images").update({
       url,
+      profile_id: profileIdVal || null,
       is_public: (form.is_public as HTMLInputElement).checked,
       is_common_use: (form.is_common_use as HTMLInputElement).checked,
       additional_context: (form.additional_context as HTMLTextAreaElement).value || null,

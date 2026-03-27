@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { createAnonClient } from "@/lib/supabase/server";
-import { ImagePreview } from "@/components/images/image-preview";
-import { Badge } from "@/components/ui/badge";
-import { ImageDeleteButton } from "@/components/images/image-delete-button";
 import { SearchSortBar } from "@/components/admin/search-sort-bar";
+import { ImageCard } from "@/components/images/image-card";
 import type { Image as ImageType } from "@/lib/types";
 
 const SORT_OPTIONS = [
@@ -13,15 +11,20 @@ const SORT_OPTIONS = [
   { value: "common", label: "Common use first" },
 ];
 
+const PAGE_SIZE = 50;
+
 interface Props {
-  searchParams: Promise<{ q?: string; sort?: string }>;
+  searchParams: Promise<{ q?: string; sort?: string; page?: string }>;
 }
 
 export default async function ImagesPage({ searchParams }: Props) {
-  const { q = "", sort = "newest" } = await searchParams;
+  const { q = "", sort = "newest", page = "1" } = await searchParams;
+  const currentPage = Math.max(1, parseInt(page));
+  const from = (currentPage - 1) * PAGE_SIZE;
+  const to = from + PAGE_SIZE - 1;
   const supabase = createAnonClient();
 
-  let query = supabase.from("images").select("*").limit(100);
+  let query = supabase.from("images").select("*", { count: "exact" });
 
   if (q) query = query.or(`url.ilike.%${q}%,image_description.ilike.%${q}%,additional_context.ilike.%${q}%`);
 
@@ -30,7 +33,8 @@ export default async function ImagesPage({ searchParams }: Props) {
   else if (sort === "common") query = query.order("is_common_use", { ascending: false }).order("created_datetime_utc", { ascending: false });
   else query = query.order("created_datetime_utc", { ascending: false });
 
-  const { data: images } = await query;
+  const { data: images, count } = await query.range(from, to);
+  const totalPages = Math.ceil((count ?? 0) / PAGE_SIZE);
 
   return (
     <div>
@@ -40,7 +44,7 @@ export default async function ImagesPage({ searchParams }: Props) {
             Images
           </h1>
           <div style={{ fontSize: "0.625rem", color: "var(--jade-muted)", letterSpacing: "0.1em" }}>
-            {images?.length ?? 0} shown
+            {count ?? 0} total — page {currentPage} of {totalPages || 1}
           </div>
         </div>
         <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", flexWrap: "wrap" }}>
@@ -51,30 +55,7 @@ export default async function ImagesPage({ searchParams }: Props) {
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1rem" }}>
         {(images as ImageType[])?.map((img) => (
-          <div key={img.id} className="stat-card" style={{ padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-            <ImagePreview src={img.url ?? ""} />
-            <div style={{ fontSize: "0.625rem", color: "var(--jade-muted)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {img.url}
-            </div>
-            <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
-              <Badge label={img.is_public ? "Public" : "Private"} active={img.is_public ?? false} />
-              {img.is_common_use && <Badge label="Common Use" active />}
-            </div>
-            {img.additional_context && (
-              <div style={{ fontSize: "0.7rem", color: "var(--jade-dim)", overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>
-                {img.additional_context}
-              </div>
-            )}
-            <div style={{ fontSize: "0.625rem", color: "var(--jade-muted)", marginTop: "auto" }}>
-              Created: {new Date(img.created_datetime_utc).toLocaleDateString()}
-            </div>
-            <div style={{ display: "flex", gap: "0.5rem" }}>
-              <Link href={`/admin/images/${img.id}/edit`} className="btn-jade" style={{ padding: "0.25rem 0.75rem", fontSize: "0.625rem", flex: 1, textAlign: "center" }}>
-                Edit
-              </Link>
-              <ImageDeleteButton imageId={img.id} />
-            </div>
-          </div>
+          <ImageCard key={img.id} img={img} />
         ))}
       </div>
 
@@ -83,6 +64,38 @@ export default async function ImagesPage({ searchParams }: Props) {
           No images found
         </div>
       )}
+
+      {totalPages > 1 && (() => {
+        const pages: (number | "...")[] = [];
+        const delta = 1;
+        const left = currentPage - delta;
+        const right = currentPage + delta;
+        for (let p = 1; p <= totalPages; p++) {
+          if (p === 1 || p === totalPages || (p >= left && p <= right)) pages.push(p);
+          else if (p === left - 1 || p === right + 1) pages.push("...");
+        }
+        const buildHref = (p: number) => {
+          const params = new URLSearchParams({ q, sort, page: String(p) });
+          return `?${params.toString()}`;
+        };
+        return (
+          <div style={{ display: "flex", gap: "0.25rem", marginTop: "1.5rem", alignItems: "center", flexWrap: "wrap" }}>
+            {currentPage > 1 && (
+              <Link href={buildHref(currentPage - 1)} className="btn-jade" style={{ padding: "0.25rem 0.75rem", fontSize: "0.7rem" }}>← Prev</Link>
+            )}
+            {pages.map((p, i) =>
+              p === "..." ? (
+                <span key={`e-${i}`} style={{ fontSize: "0.7rem", color: "var(--jade-muted)", padding: "0 0.25rem" }}>...</span>
+              ) : (
+                <Link key={p} href={buildHref(p)} className="btn-jade" style={{ padding: "0.25rem 0.6rem", fontSize: "0.7rem", opacity: p === currentPage ? 1 : 0.4, pointerEvents: p === currentPage ? "none" : "auto" }}>{p}</Link>
+              )
+            )}
+            {currentPage < totalPages && (
+              <Link href={buildHref(currentPage + 1)} className="btn-jade" style={{ padding: "0.25rem 0.75rem", fontSize: "0.7rem" }}>Next →</Link>
+            )}
+          </div>
+        );
+      })()}
     </div>
   );
 }

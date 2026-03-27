@@ -64,6 +64,7 @@ export function HumorMixTable({ items, flavors, sort }: Props) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+              <th style={thStyle}>ID</th>
               <th style={thStyle}>Humor Flavor</th>
               <th style={thStyle}>Caption Count</th>
               <th style={thStyle}>Created</th>
@@ -74,7 +75,7 @@ export function HumorMixTable({ items, flavors, sort }: Props) {
             {items.map((m) => (
               <tr key={m.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
                 {editingId === m.id ? (
-                  <td colSpan={4} style={{ padding: "0.5rem 1rem" }}>
+                  <td colSpan={5} style={{ padding: "0.5rem 1rem" }}>
                     <form onSubmit={(e) => { e.preventDefault(); handleUpdate(m.id, new FormData(e.currentTarget)); }} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                       <span style={{ fontSize: "0.75rem", color: "var(--jade-dim)", fontWeight: 600, minWidth: "120px" }}>
                         {flavorMap.get(m.humor_flavor_id) ?? `#${m.humor_flavor_id}`}
@@ -94,6 +95,7 @@ export function HumorMixTable({ items, flavors, sort }: Props) {
                   </td>
                 ) : (
                   <>
+                    <td style={{ ...cellStyle, color: "var(--jade)", fontWeight: 700 }}>#{m.id}</td>
                     <td style={{ ...cellStyle, fontWeight: 600, color: "var(--jade-dim)" }}>
                       {flavorMap.get(m.humor_flavor_id) ?? `#${m.humor_flavor_id}`}
                     </td>

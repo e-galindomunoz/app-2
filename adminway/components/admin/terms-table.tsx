@@ -2,15 +2,15 @@
 
 import { useState, useTransition, useMemo } from "react";
 import { createTerm, updateTerm, deleteTerm } from "@/app/admin/terms/actions";
-import type { Term } from "@/lib/types";
+import type { Term, TermType } from "@/lib/types";
 
 const cellStyle: React.CSSProperties = { padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-dim)", verticalAlign: "top" };
 const thStyle: React.CSSProperties = { textAlign: "left", padding: "0.75rem 1rem", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--jade)", fontWeight: 600 };
 
-function TermForm({ initial, onSave, onCancel, isPending }: { initial?: Term; onSave: (fd: FormData) => void; onCancel: () => void; isPending: boolean }) {
+function TermForm({ initial, termTypes, onSave, onCancel, isPending }: { initial?: Term; termTypes: TermType[]; onSave: (fd: FormData) => void; onCancel: () => void; isPending: boolean }) {
   return (
     <tr style={{ background: "rgba(0,255,159,0.04)", borderBottom: "1px solid var(--jade-subtle)" }}>
-      <td colSpan={6} style={{ padding: "1rem" }}>
+      <td colSpan={8} style={{ padding: "1rem" }}>
         <form onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget)); }} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", maxWidth: "700px" }}>
           <div style={{ display: "flex", gap: "0.75rem" }}>
             <div style={{ flex: 1 }}>
@@ -20,6 +20,15 @@ function TermForm({ initial, onSave, onCancel, isPending }: { initial?: Term; on
             <div style={{ minWidth: "80px" }}>
               <label style={{ fontSize: "0.625rem", color: "var(--jade-muted)", letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Priority</label>
               <input name="priority" type="number" defaultValue={initial?.priority ?? 0} className="input-jade" style={{ width: "100%" }} />
+            </div>
+            <div style={{ minWidth: "120px" }}>
+              <label style={{ fontSize: "0.625rem", color: "var(--jade-muted)", letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Type</label>
+              <select name="term_type_id" defaultValue={initial?.term_type_id ?? ""} className="input-jade" style={{ width: "100%" }}>
+                <option value="">— None —</option>
+                {termTypes.map((tt) => (
+                  <option key={tt.id} value={tt.id}>{tt.name}</option>
+                ))}
+              </select>
             </div>
           </div>
           <div>
@@ -40,13 +49,15 @@ function TermForm({ initial, onSave, onCancel, isPending }: { initial?: Term; on
   );
 }
 
-export function TermsTable({ items }: { items: Term[] }) {
+export function TermsTable({ items, termTypes }: { items: Term[]; termTypes: TermType[] }) {
+  const termTypeMap = new Map(termTypes.map((tt) => [tt.id, tt.name]));
   const [showAdd, setShowAdd] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const [q, setQ] = useState("");
   const [sort, setSort] = useState("term");
+  const [showTypeId, setShowTypeId] = useState(false);
 
   const filtered = useMemo(() => {
     let list = items;
@@ -106,25 +117,43 @@ export function TermsTable({ items }: { items: Term[] }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+              <th style={thStyle}>ID</th>
               <th style={thStyle}>Term</th>
               <th style={thStyle}>Definition</th>
               <th style={thStyle}>Example</th>
               <th style={thStyle}>Priority</th>
+              <th style={thStyle}>
+                <span style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+                  Type
+                  <button
+                    onClick={() => setShowTypeId((v) => !v)}
+                    style={{ fontSize: "0.55rem", padding: "0.1rem 0.35rem", background: showTypeId ? "var(--jade)" : "transparent", color: showTypeId ? "#000" : "var(--jade-muted)", border: "1px solid var(--jade-subtle)", cursor: "pointer", letterSpacing: "0.05em", fontFamily: "inherit" }}
+                  >
+                    {showTypeId ? "ID" : "Name"}
+                  </button>
+                </span>
+              </th>
               <th style={thStyle}>Created</th>
               <th style={thStyle}>Actions</th>
             </tr>
           </thead>
           <tbody>
-            {showAdd && <TermForm onSave={handleAdd} onCancel={() => setShowAdd(false)} isPending={isPending} />}
+            {showAdd && <TermForm termTypes={termTypes} onSave={handleAdd} onCancel={() => setShowAdd(false)} isPending={isPending} />}
             {filtered.map((t) =>
               editingId === t.id ? (
-                <TermForm key={t.id} initial={t} onSave={(fd) => handleEdit(t.id, fd)} onCancel={() => setEditingId(null)} isPending={isPending} />
+                <TermForm key={t.id} initial={t} termTypes={termTypes} onSave={(fd) => handleEdit(t.id, fd)} onCancel={() => setEditingId(null)} isPending={isPending} />
               ) : (
                 <tr key={t.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+                  <td style={{ ...cellStyle, color: "var(--jade)", fontWeight: 700 }}>#{t.id}</td>
                   <td style={{ ...cellStyle, fontWeight: 600, color: "var(--jade-dim)" }}>{t.term}</td>
                   <td style={{ ...cellStyle, color: "var(--jade-muted)", maxWidth: "200px" }}>{t.definition}</td>
                   <td style={{ ...cellStyle, color: "var(--jade-muted)", maxWidth: "200px" }}>{t.example}</td>
                   <td style={{ ...cellStyle, color: "var(--jade-muted)" }}>{t.priority}</td>
+                  <td style={{ ...cellStyle, color: "var(--jade-muted)" }}>
+                    {t.term_type_id != null
+                      ? showTypeId ? `#${t.term_type_id}` : (termTypeMap.get(t.term_type_id) ?? `#${t.term_type_id}`)
+                      : "—"}
+                  </td>
                   <td style={{ ...cellStyle, fontSize: "0.7rem", color: "var(--jade-muted)" }}>{new Date(t.created_datetime_utc).toLocaleDateString()}</td>
                   <td style={{ padding: "0.5rem 1rem" }}>
                     <div style={{ display: "flex", gap: "0.5rem" }}>

@@ -86,7 +86,7 @@ export default async function CaptionsPage({ searchParams }: Props) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
-              {["Content", "Image", "Public", "Likes", "Created"].map((h) => (
+              {["ID", "Content", "Profile ID", "Image ID", "Flavor", "Featured", "Caption Req", "Prompt Chain", "Public", "Likes", "Created"].map((h) => (
                 <th
                   key={h}
                   style={{
@@ -107,6 +107,9 @@ export default async function CaptionsPage({ searchParams }: Props) {
           <tbody>
             {(captions as Caption[])?.map((c) => (
               <tr key={c.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.65rem", color: "var(--jade-muted)", fontFamily: "monospace", whiteSpace: "nowrap" }}>
+                  {c.id}
+                </td>
                 <td
                   style={{
                     padding: "0.75rem 1rem",
@@ -117,8 +120,23 @@ export default async function CaptionsPage({ searchParams }: Props) {
                 >
                   <CaptionCopy content={c.content ?? ""} />
                 </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.65rem", color: "var(--jade-muted)", fontFamily: "monospace", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {c.profile_id}
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.65rem", color: "var(--jade-muted)", fontFamily: "monospace", maxWidth: "120px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {c.image_id}
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>
+                  {c.humor_flavor_id != null ? `#${c.humor_flavor_id}` : "—"}
+                </td>
                 <td style={{ padding: "0.75rem 1rem" }}>
-                  <Badge label={c.image_id ? "Yes" : "No"} active={!!c.image_id} />
+                  <Badge label={c.is_featured ? "Yes" : "No"} active={c.is_featured} />
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>
+                  {c.caption_request_id != null ? `#${c.caption_request_id}` : "—"}
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>
+                  {c.llm_prompt_chain_id != null ? `#${c.llm_prompt_chain_id}` : "—"}
                 </td>
                 <td style={{ padding: "0.75rem 1rem" }}>
                   <Badge label={c.is_public ? "Public" : "Private"} active={c.is_public} />

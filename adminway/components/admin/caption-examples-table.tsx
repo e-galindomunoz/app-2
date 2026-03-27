@@ -10,7 +10,7 @@ const thStyle: React.CSSProperties = { textAlign: "left", padding: "0.75rem 1rem
 function ExampleForm({ initial, onSave, onCancel, isPending }: { initial?: CaptionExample; onSave: (fd: FormData) => void; onCancel: () => void; isPending: boolean }) {
   return (
     <tr style={{ background: "rgba(0,255,159,0.04)", borderBottom: "1px solid var(--jade-subtle)" }}>
-      <td colSpan={6} style={{ padding: "1rem" }}>
+      <td colSpan={7} style={{ padding: "1rem" }}>
         <form onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget)); }} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", maxWidth: "700px" }}>
           <div>
             <label style={{ fontSize: "0.625rem", color: "var(--jade-muted)", letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Image Description *</label>
@@ -108,6 +108,7 @@ export function CaptionExamplesTable({ items }: { items: CaptionExample[] }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+              <th style={thStyle}>ID</th>
               <th style={thStyle}>Image Description</th>
               <th style={thStyle}>Caption</th>
               <th style={thStyle}>Explanation</th>
@@ -123,6 +124,7 @@ export function CaptionExamplesTable({ items }: { items: CaptionExample[] }) {
                 <ExampleForm key={ex.id} initial={ex} onSave={(fd) => handleEdit(ex.id, fd)} onCancel={() => setEditingId(null)} isPending={isPending} />
               ) : (
                 <tr key={ex.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+                  <td style={{ ...cellStyle, color: "var(--jade)", fontWeight: 700 }}>#{ex.id}</td>
                   <td style={{ ...cellStyle, maxWidth: "200px", color: "var(--jade-muted)" }}>{ex.image_description}</td>
                   <td style={{ ...cellStyle, maxWidth: "200px" }}>{ex.caption}</td>
                   <td style={{ ...cellStyle, maxWidth: "200px", color: "var(--jade-muted)" }}>{ex.explanation}</td>

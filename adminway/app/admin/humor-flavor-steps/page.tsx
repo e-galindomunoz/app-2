@@ -51,7 +51,7 @@ export default async function HumorFlavorStepsPage({ searchParams }: Props) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
-              {["Order", "Flavor", "Description", "Temp", "Model ID", "Created"].map((h) => (
+              {["ID", "Order", "Flavor", "Step Type", "Input Type", "Output Type", "Description", "Temp", "Model ID", "System Prompt", "User Prompt", "Created"].map((h) => (
                 <th key={h} style={{ textAlign: "left", padding: "0.75rem 1rem", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--jade)", fontWeight: 600 }}>
                   {h}
                 </th>
@@ -61,13 +61,23 @@ export default async function HumorFlavorStepsPage({ searchParams }: Props) {
           <tbody>
             {(steps as HumorFlavorStep[])?.map((s) => (
               <tr key={s.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade)", fontWeight: 700 }}>#{s.id}</td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade)", fontWeight: 700 }}>{s.order_by}</td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-dim)" }}>
                   {flavorMap.get(s.humor_flavor_id) ?? `#${s.humor_flavor_id}`}
                 </td>
-                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)", maxWidth: "300px" }}>{s.description ?? "—"}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>#{s.humor_flavor_step_type_id}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>#{s.llm_input_type_id}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>#{s.llm_output_type_id}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)", maxWidth: "200px" }}>{s.description ?? "—"}</td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>{s.llm_temperature ?? "—"}</td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>#{s.llm_model_id}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-muted)", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {s.llm_system_prompt ?? "—"}
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-muted)", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {s.llm_user_prompt ?? "—"}
+                </td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-muted)" }}>
                   {new Date(s.created_datetime_utc).toLocaleDateString()}
                 </td>

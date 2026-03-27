@@ -81,6 +81,7 @@ export function WhitelistedEmailsTable({ items }: { items: WhitelistedEmail[] })
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+              <th style={thStyle}>ID</th>
               <th style={thStyle}>Email</th>
               <th style={thStyle}>Created</th>
               <th style={thStyle}>Actions</th>
@@ -90,7 +91,7 @@ export function WhitelistedEmailsTable({ items }: { items: WhitelistedEmail[] })
             {filtered.map((e) => (
               <tr key={e.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
                 {editingId === e.id ? (
-                  <td colSpan={3} style={{ padding: "0.5rem 1rem" }}>
+                  <td colSpan={4} style={{ padding: "0.5rem 1rem" }}>
                     <form onSubmit={(ev) => { ev.preventDefault(); handleUpdate(e.id, new FormData(ev.currentTarget)); }} style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
                       <input name="email" type="email" required defaultValue={e.email_address} className="input-jade" style={{ fontSize: "0.7rem", padding: "0.25rem 0.5rem", flex: 1, maxWidth: "320px" }} />
                       <button type="submit" disabled={isPending} className="btn-jade" style={{ fontSize: "0.625rem", padding: "0.2rem 0.5rem" }}>{isPending ? "…" : "Save"}</button>
@@ -99,6 +100,7 @@ export function WhitelistedEmailsTable({ items }: { items: WhitelistedEmail[] })
                   </td>
                 ) : (
                   <>
+                    <td style={{ ...cellStyle, color: "var(--jade)", fontWeight: 700 }}>#{e.id}</td>
                     <td style={{ ...cellStyle, fontWeight: 600, color: "var(--jade-dim)" }}>{e.email_address}</td>
                     <td style={{ ...cellStyle, fontSize: "0.7rem", color: "var(--jade-muted)" }}>{new Date(e.created_datetime_utc).toLocaleDateString()}</td>
                     <td style={{ padding: "0.5rem 1rem", display: "flex", gap: "0.4rem" }}>

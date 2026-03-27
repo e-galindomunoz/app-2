@@ -10,7 +10,7 @@ const thStyle: React.CSSProperties = { textAlign: "left", padding: "0.75rem 1rem
 function ProviderForm({ initial, onSave, onCancel, isPending }: { initial?: LlmProvider; onSave: (fd: FormData) => void; onCancel: () => void; isPending: boolean }) {
   return (
     <tr style={{ background: "rgba(0,255,159,0.04)", borderBottom: "1px solid var(--jade-subtle)" }}>
-      <td colSpan={3} style={{ padding: "1rem" }}>
+      <td colSpan={4} style={{ padding: "1rem" }}>
         <form onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget)); }} style={{ display: "flex", gap: "0.75rem", alignItems: "flex-end", maxWidth: "500px" }}>
           <div style={{ flex: 1 }}>
             <label style={{ fontSize: "0.625rem", color: "var(--jade-muted)", letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Name *</label>
@@ -85,6 +85,7 @@ export function LlmProvidersTable({ items }: { items: LlmProvider[] }) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+              <th style={thStyle}>ID</th>
               <th style={thStyle}>Name</th>
               <th style={thStyle}>Created</th>
               <th style={thStyle}>Actions</th>
@@ -97,6 +98,7 @@ export function LlmProvidersTable({ items }: { items: LlmProvider[] }) {
                 <ProviderForm key={p.id} initial={p} onSave={(fd) => handleEdit(p.id, fd)} onCancel={() => setEditingId(null)} isPending={isPending} />
               ) : (
                 <tr key={p.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+                  <td style={{ ...cellStyle, color: "var(--jade)", fontWeight: 700 }}>#{p.id}</td>
                   <td style={{ ...cellStyle, fontWeight: 600, color: "var(--jade-dim)" }}>{p.name}</td>
                   <td style={{ ...cellStyle, fontSize: "0.7rem", color: "var(--jade-muted)" }}>{new Date(p.created_datetime_utc).toLocaleDateString()}</td>
                   <td style={{ padding: "0.5rem 1rem" }}>

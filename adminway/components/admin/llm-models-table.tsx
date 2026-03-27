@@ -10,7 +10,7 @@ const thStyle: React.CSSProperties = { textAlign: "left", padding: "0.75rem 1rem
 function ModelForm({ initial, providers, onSave, onCancel, isPending }: { initial?: LlmModel; providers: LlmProvider[]; onSave: (fd: FormData) => void; onCancel: () => void; isPending: boolean }) {
   return (
     <tr style={{ background: "rgba(0,255,159,0.04)", borderBottom: "1px solid var(--jade-subtle)" }}>
-      <td colSpan={6} style={{ padding: "1rem" }}>
+      <td colSpan={7} style={{ padding: "1rem" }}>
         <form onSubmit={(e) => { e.preventDefault(); onSave(new FormData(e.currentTarget)); }} style={{ display: "flex", flexDirection: "column", gap: "0.75rem", maxWidth: "700px" }}>
           <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
             <div style={{ flex: 1, minWidth: "160px" }}>
@@ -111,6 +111,7 @@ export function LlmModelsTable({ items, providers }: { items: LlmModel[]; provid
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+              <th style={thStyle}>ID</th>
               <th style={thStyle}>Name</th>
               <th style={thStyle}>Provider Model ID</th>
               <th style={thStyle}>Provider</th>
@@ -126,6 +127,7 @@ export function LlmModelsTable({ items, providers }: { items: LlmModel[]; provid
                 <ModelForm key={m.id} initial={m} providers={providers} onSave={(fd) => handleEdit(m.id, fd)} onCancel={() => setEditingId(null)} isPending={isPending} />
               ) : (
                 <tr key={m.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+                  <td style={{ ...cellStyle, color: "var(--jade)", fontWeight: 700 }}>#{m.id}</td>
                   <td style={{ ...cellStyle, fontWeight: 600 }}>{m.name}</td>
                   <td style={{ ...cellStyle, color: "var(--jade-muted)", fontFamily: "monospace", fontSize: "0.7rem" }}>{m.provider_model_id}</td>
                   <td style={{ ...cellStyle, color: "var(--jade-muted)" }}>{providerMap.get(m.llm_provider_id) ?? `#${m.llm_provider_id}`}</td>

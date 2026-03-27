@@ -24,11 +24,6 @@ const ENTITIES: Record<string, EntityConfig> = {
     cols: ["id", "email", "is_superadmin", "is_in_study", "is_matrix_admin", "created_datetime_utc"],
     searchCols: ["email", "first_name", "last_name"],
   },
-  users: {
-    table: "profiles",
-    cols: ["id", "email", "is_superadmin", "is_in_study", "is_matrix_admin", "created_datetime_utc"],
-    searchCols: ["email", "first_name", "last_name"],
-  },
   images: {
     table: "images",
     cols: ["id", "url", "is_public", "is_common_use", "profile_id", "created_datetime_utc"],

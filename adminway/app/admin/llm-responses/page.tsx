@@ -51,7 +51,7 @@ export default async function LlmResponsesPage({ searchParams }: Props) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <thead>
             <tr style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
-              {["Caption Req", "Model ID", "Response", "Proc. Time", "Temp", "Created"].map((h) => (
+              {["ID", "Caption Req", "Profile ID", "Model ID", "Flavor", "Prompt Chain", "Step", "Response", "Proc. Time", "Temp", "System Prompt", "User Prompt", "Created"].map((h) => (
                 <th key={h} style={{ textAlign: "left", padding: "0.75rem 1rem", fontSize: "0.625rem", letterSpacing: "0.15em", textTransform: "uppercase", color: "var(--jade)", fontWeight: 600 }}>
                   {h}
                 </th>
@@ -61,13 +61,30 @@ export default async function LlmResponsesPage({ searchParams }: Props) {
           <tbody>
             {(responses as LlmModelResponse[])?.map((r) => (
               <tr key={r.id} style={{ borderBottom: "1px solid var(--jade-subtle)" }}>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.65rem", color: "var(--jade-muted)", fontFamily: "monospace", maxWidth: "100px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.id}</td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-dim)" }}>#{r.caption_request_id}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.65rem", color: "var(--jade-muted)", fontFamily: "monospace", maxWidth: "100px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {r.profile_id}
+                </td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>#{r.llm_model_id}</td>
-                <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-dim)", maxWidth: "360px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>#{r.humor_flavor_id}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>
+                  {r.llm_prompt_chain_id != null ? `#${r.llm_prompt_chain_id}` : "—"}
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>
+                  {r.humor_flavor_step_id != null ? `#${r.humor_flavor_step_id}` : "—"}
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-dim)", maxWidth: "280px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
                   {r.llm_model_response ?? "—"}
                 </td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>{r.processing_time_seconds}s</td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.75rem", color: "var(--jade-muted)" }}>{r.llm_temperature ?? "—"}</td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-muted)", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {r.llm_system_prompt}
+                </td>
+                <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-muted)", maxWidth: "240px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                  {r.llm_user_prompt}
+                </td>
                 <td style={{ padding: "0.75rem 1rem", fontSize: "0.7rem", color: "var(--jade-muted)" }}>
                   {new Date(r.created_datetime_utc).toLocaleDateString()}
                 </td>
